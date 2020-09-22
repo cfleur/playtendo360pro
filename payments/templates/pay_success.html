@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+{% if success.purchase_success_game %}
+{{ purchase_success_game }}
+{% endif %}
+{{ q.pid }}
+
+{{ purchase_success_game }}
+{% if game %}
+<form action="/pay/success/{{ game.pk }}" method="POST">
+    {% csrf_token %}
+    <input name="game" value="{{ game.pk }}" />
+    <input name="player" value="{{ request.user }}" />
+    <!--TODO: form should actually send the pid and payment reference number not these values-->
+    <!--https://stackoverflow.com/questions/7764154/pass-a-javascript-variable-value-into-input-type-hidden-value-->
+    <input type="submit" value="send post req for purchase, commit db change"/>
+</form>
+{% endif %}
+
+{% if purchase_success_game %}
+<p>Purchase success game id: {{ purchase_success_game.id }}, Owner id: {{ request.user.id }}</p>
+{% endif %}
+
+<div>
+    <p>Our robots were able to successfully process your payment.</p>
+    <script> document.write('<p>Payment reference number: ' + getQueryVariable("ref") + '</p>')</script>
+
+    {% if purchase_success_game %}
+    <p>May you have many great plays of {{ purchase_success_game.title }}, made by {{ purchase_success_game.developer.user }}!</p>
+    <a href="{% url 'game-play' purchase_success_game.pk %}">Play</a>
+    {% endif %}
+</div>
+
+{% endblock %}

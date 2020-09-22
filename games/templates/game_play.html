@@ -1,0 +1,57 @@
+{% extends "game_detail.html" %}
+
+
+{% block content %}
+    {% block game-title %}
+        {{ block.super }}
+    {% endblock %}
+{% if payment_success %}
+    <p>Our robots were able to successfully process your payment.</p>
+    <p>Your payment reference code: {{ payment_success }}</p>
+    <p>May you have many great plays of {{ game.title }}, made by {{ game.developer.user }}!</p>
+{% endif %}
+    {% block game-action %}
+        <!--TODO: also game links need to be changed to https for deployment (they exist, see course discussion on piazza fourm)-->
+        <div class="container-fluid p-4" style="height: 50vh">
+            <iframe class="embed-responsive-item" src="{{ game.link }}" width="100%" height="100%"></iframe>
+        </div>
+        <!-- -->
+        <table class="table table-striped table-dark">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">User</th>
+              <th scope="col">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for score in leaderboard %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td><img src="{{score.player.avatar.url}}" width="30"/> {{score.player.user}}</td>
+              <td>{{score.score}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <form id="scoreForm" method="post" action="{% url 'game-play' game.pk %}">
+          {% csrf_token %}
+          <input id="input" type="hidden" name="score"/>
+        </form>
+        <!--TODO: Some interaction here-->
+        <script>
+        $(document).ready(function () {
+          "use strict";
+          $(window).on('message', function(evt) {
+            var data = evt.originalEvent.data;
+            if (data.messageType == 'SCORE') {
+              document.getElementById("input").value = data.score;
+              document.getElementById("scoreForm").submit();
+            };
+          });
+        });
+        </script>
+
+        <!--nothing on this page does anything that makes any sense -->
+    {% endblock %}
+{% endblock %}

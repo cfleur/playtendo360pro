@@ -1,0 +1,43 @@
+<!--TODO: maybe this file is not used?-->
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>{{ game.title }} - Modify game details:</h3>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <p>Description:<br>
+  <textarea name="descrip" rows="8" cols="50" maxlength="1000">{{game.description}}
+  </textarea></p>
+
+  <p>Preview picture:<br>
+  <img src="{{game.preview_pic.url}}" width="200"><br>
+  <input type="file" name="pic" accept="image/*"/></p>
+
+
+  <p>Genre:<br>
+  <select name="genre">
+    {% if game.genre %}<option value="{{game.genre}}">-{{game.get_genre_display}}-</option>{% endif %}
+    <option value="action">Action</option>
+    <option value="adventure">Adventure</option>
+    <option value="shooter">Shooter</option>
+    <option value="fighting">Fighting</option>
+    <option value="platformer">Platformer</option>
+    <option value="survival">Survival</option>
+    <option value="rpg">Role-playing</option>
+    <option value="strategy">Strategy</option>
+    <option value="sports">Sports</option>
+    <option value="racing">Racing</option>
+    <option value="party">Party</option>
+    <option value="educational">Educational</option>
+  </select>
+  </p>
+
+  <p>Price of the game:<br>
+  <input type="number" name="price" value="{{game.price}}" min="0" max="100"/></p>
+
+  <p><input type="submit" value="Save changes"/></p>
+  <!-- possible TODO game deletion -->
+</form>
+
+
+{% endblock %}

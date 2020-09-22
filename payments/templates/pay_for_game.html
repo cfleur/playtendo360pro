@@ -1,0 +1,27 @@
+{% extends "game_detail.html" %}
+
+{% block content %}
+    {% block game-title %}
+        {{ block.super }}
+    {% endblock %}
+    {% block game-action %}
+        Game price: {{ game.price }}
+        Your account balance: {{ request.user.account.account_balance }}
+        <!--TODO: user can only buy a game if there is enough money in their account!-->
+        <form action="http://payments.webcourse.niksula.hut.fi/pay/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="pid" value="{{ pid }}" />
+            <input type="hidden" name="sid" value="playtendo360pro" />
+            <input type="hidden" name="success_url" value="{{ success_url }}" />
+            <input type="hidden" name="cancel_url" value="{{ cancel_url }}" />
+            <input type="hidden" name="error_url" value="{{ error_url }}" />
+            <input type="hidden" name="dev" value="1" />
+            <input type="hidden" name="checksum" id="id_checksum" value="{{ checksum }}" /> <br>
+            <input type="hidden" type="text" id="id_amount" name="amount" value="{{ amount }}"/> <br>
+            <input type="submit" value="Continue to payment site"/>
+        </form>
+        You are about to buy this game.
+        Confirm purchase
+        Cancel and go back
+    {% endblock %}
+{% endblock %}

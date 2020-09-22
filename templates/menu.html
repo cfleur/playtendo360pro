@@ -1,0 +1,39 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand mb-0 h1" href="/">Playtendo360</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link active" href="/">Home</a>
+      <a class="nav-item nav-link active" href="/accounts/profile">Profile</a>
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Games by genre
+        </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Adventure</a>
+            <a class="dropdown-item" href="#">Shooter</a>
+            <a class="dropdown-item" href="#">Fighting</a>
+            <a class="dropdown-item" href="#">Platformer</a>
+            <a class="dropdown-item" href="#">Survival</a>
+            <a class="dropdown-item" href="#">Role-playing</a>
+            <a class="dropdown-item" href="#">Strategy</a>
+            <a class="dropdown-item" href="#">Sports</a>
+            <a class="dropdown-item" href="#">Racing</a>
+            <a class="dropdown-item" href="#">Party</a>
+            <a class="dropdown-item" href="#">Educational</a>
+          </div>
+      </div>
+      {% if request.user.is_authenticated %}
+     	  <span class="navbar-text">Signed in as {{request.user.username}} - Account balance: {{request.user.account.account_balance}}</span>
+     	  <a class="nav-item nav-link active" href="/logout">Log out</a>
+      {% else %}
+     	  <a class="nav-item nav-link active" href="/accounts/login">Login</a>
+     	  <a class="nav-item nav-link active" href="/accounts/register">Sign up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>

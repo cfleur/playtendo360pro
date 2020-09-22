@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div>
+    <p>Our robots were not able to process your payment.</p>
+    <a href="{% url 'game-detail' game.pk %}">Back to game</a>
+</div>
+
+{% endblock %}

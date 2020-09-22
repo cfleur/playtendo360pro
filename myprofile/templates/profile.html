@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="jumbotron">
+	{% if request.user.account.account_type == "player" %}
+		<h2>Player profile - {{request.user.username}}</h2>
+	{% else %}
+		<h2>Developer profile - {{request.user.username}}</h2>
+	{% endif %}
+	<ul>
+		{% if request.user.account.avatar and request.user.account.avatar.url %}
+        <li>Avatar:<br><img src="{{request.user.account.avatar.url}}" width="150"></li>
+		{% endif %}
+		<li>Balance: {{request.user.account.account_balance}}<br>
+			{% if request.user.account.account_type == "player" %}
+				<a class="btn btn-primary btn-sm" href="{% url 'add money' %}">Add funds</a>
+			{% else %}
+				<a class="btn btn-primary btn-sm" href="#">Collect funds</a>
+			{% endif %}</li>
+		<li><a class="btn btn-primary" href="{% url 'modify profile' %}">Modify account details</a></li>
+		{% if request.user.account.account_type == "developer" %}
+			<li><a class="btn btn-primary" href="{% url 'game submit' %}">Submit a new game</a></li>
+		{% endif %}
+	</ul>
+</div>
+
+	{% if request.user.account.account_type == "player" %}
+		<h3>Owned games:</h3>
+		<ul>
+		{% if owned_games %}
+		{% for game in owned_games %}
+			{% if game.preview_pic and game.preview_pic.url %}<li><img src="{{ game.preview_pic.url }}" width="90">{% endif %}
+				<a href="{% url 'game-detail' game.pk %}">{{ game.title }}</a>
+			</li>
+			{% empty %}
+				<li>Your game inventory is looking a little empty at the moment. Visit the <a href="/">store</a> to acquire games</li>
+		{% endfor %}
+			{% endif %}
+		</ul>
+	{% else %}
+		<h3>Released games:</h3>
+		<ul>
+			{% if submitted_games %}
+		{% for game in submitted_games %}
+			{% if game.preview_pic and game.preview_pic.url %}<li><img src="{{ game.preview_pic.url }}" width="30">{% endif %}
+				<a href="{% url 'game-detail' game.pk %}">
+					{{ game.title }}
+				</a> - Owned by: {{ game.owners.all|length|add:"-1" }} players -
+				<a href="#">Sales statistics</a> - <a href="{% url 'modify game' game.pk %}">Edit game details</a>
+			</li>
+		{% empty %}
+			<li>You haven't released any games yet. <a href="{% url 'game submit' %}">Click here to submit</a> you first one</li>
+		{% endfor %}
+			{% endif %}
+		</ul>
+	{% endif %}
+{% endblock %}

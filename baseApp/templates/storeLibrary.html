@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table style="width:100%">
+  <tr>
+    <th></th>
+    <th>Title</th>
+    <th>Price</th>
+    <th>Developer</th>
+    <!--<th>Genre</th>-->
+</tr>
+{% if games %}
+  {% for game in games %}
+  <tr>
+    {% if game.preview_pic and game.preview_pic.url %}
+    <th><img src="{{game.preview_pic.url}}" height="90" width="120"/></th>
+    {% endif %}
+    <th><a href="{% url 'game-detail' game.pk %}">{{game.title}}</a></th>
+    <th>{{game.price}}</th>
+    <th>{{game.developer.user.username}}</th>
+    {% if game.genre %}
+    <th>{{game.get_genre_display}}</th>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  {% endif %}
+</table>
+{% endblock %}

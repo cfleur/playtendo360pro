@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="jumbotron">
+    {% block game-title %}
+        <div class="title">
+            <h1>{{game.title}}</h1>
+        </div>
+        <div style="display:none">
+            <!--Here is some data just for reference, uncheck style in inspector to see:-->
+            {{ User.user }}
+            {{ User.user_id }}
+            {{ User.account_balance }}
+            {{ User.account_type }}
+            {{ User.owned_games.all }}
+            {{ game.owners.all }}
+            {{ game_is_owned }}
+            {{ fake_account_type }}
+        </div>
+    {% endblock %}
+
+    {% block game-action %}
+        <div class="game_action">
+            <div class="preview">
+              {% if game.preview_pic and game.preview_pic.url %}
+                <img id="pic" src="{{game.preview_pic.url}}" width="400" height="300"/>
+              {% endif %}
+              <!--developer owns game-->
+            </div>
+            <div class="game_stats">
+              <div class="leaderboard">
+                <table class="table table-striped table-dark">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">User</th>
+                      <th scope="col">Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for score in leaderboard %}
+                    <tr>
+                      <th scope="row">{{ forloop.counter }}</th>
+                      <td><img src="{{score.player.avatar.url}}" width="30"/> {{score.player.user}}</td>
+                      <td>{{score.score}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+                  {% if game.developer.user == User.user %}
+                {% if User.user.account.avatar and User.user.account.avatar.url %}
+                      <img src="{{ game.developer.user.account.avatar.url }}" width="30"/> {% endif %}{{ game.developer.user }} its your game!
+                      <!--TODO: List sales stats here-->
+                  {% else %}
+                      Developed by:<br>
+                {% if User.user.account.avatar and User.user.account.avatar.url %}
+                      <img src="{{ game.developer.user.account.avatar.url }}" width="30"/> {% endif %}{{ game.developer.user }}
+                  {% endif%}
+              </div><br>
+            {% if game.genre %}
+              <div class="genre">
+                Genre:
+                <strong>{{game.get_genre_display}}</strong>
+              </div><br>
+            {% endif %}
+              <div class="descrip">
+                Description:<br>
+                {{game.description}}
+              </div><br>
+
+            {% if request.user.is_authenticated and User not in game.owners.all %}
+                <!--Case user is a player, user does not own the game: can purchase game if enough money-->
+                <!--TODO: check that user does not own the game properly in the view-->
+
+                {% if User.account_balance >= game.price %}
+                    <div class="price">
+                        <!--TODO: make currency filter, for example: https://stackoverflow.com/questions/346467/format-numbers-in-django-templates-->
+                        <h3>Price: {{ game.price }}</h3>
+                    </div>
+                    <p>Want to own this game?</p>
+                    <!--<input class="" type="submit" value="Buy">-->
+                    <a class="btn btn-info btn-lg" href="{% url 'pay-for-game' game.pk %}">Buy</a>
+                {% else %}
+                    <p><a href="{% url 'add money' %}">Add some money</a> to your account to buy this game.</p>
+                {% endif %}
+
+            {% elif request.user.is_authenticated and User in game.owners.all %}
+                <!--Case user is a player, user does own the game: can play the game->
+                <!--TODO: check that user does own the game properly in the view-->
+                <p>You own this game!</p>
+                <button id="play" class="btn btn-info btn-lg">Play</button>
+            {% else %}
+                <!--Case user is not a player, can see the price and disabled button to buy and login-->
+                <div class="price">
+                    <!--TODO: make currency filter, for example: https://stackoverflow.com/questions/346467/format-numbers-in-django-templates-->
+                    <h3>Price: {{ game.price }}</h3>
+                </div>
+            <a class="btn btn-info btn-lg" href="{% url 'pay-for-game' game.pk %}">Buy</a>
+            <!--<a class="btn btn-info btn-lg" type="submit" value="Buy"></a>-->
+                <!--<p><a class="" href="/accounts/login">Log in</a> as a player to purchase this game.</p>-->
+                <!--<p>Don't have a player account yet? <a class="" href="/register">Register here.</a></p>-->
+            {% endif %}
+        </div>
+
+    {% endblock %}
+  </div>
+  <script type="text/javascript">
+    var btn = document.getElementById('play');
+    btn.onclick = function () {
+        document.getElementById('pic').remove();
+        this.remove();
+    };
+  </script>
+{% endblock %}
